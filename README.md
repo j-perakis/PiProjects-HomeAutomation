@@ -70,6 +70,14 @@ pip install -r requirements.txt
 # Home Assistant Webhooks
 HOME_ASSISTANT_WEBHOOK_ARRIVE_ID=your_arrive_webhook_id
 HOME_ASSISTANT_WEBHOOK_LEAVE_ID=your_leave_webhook_id
+HOME_ASSISTANT_URL=http://your-ha-instance.local
+HOME_ASSISTANT_WEBHOOK_ARRIVE_ID=your_arrive_webhook_id
+HOME_ASSISTANT_WEBHOOK_LEAVE_ID=your_leave_webhook_id
+FLASK_HOST=your_host_ip
+FLASK_PORT=5555
+
+# MediaPipe COnfiguration
+GESTURE_MODEL_PATH=/path/to/your/gesture_recognizer.task
 
 # VoiceMonkey Configuration
 ROUTINE_API_TOKEN=your_voicemonkey_token
@@ -77,6 +85,8 @@ ROUTINE_API_TOKEN=your_voicemonkey_token
 # Web Interface Security
 SECRET_KEY=your_flask_secret_key
 BUTTON_PAGE_PASSWORDS=password1,password2,password3
+HOST=your_host_ip
+PORT=5050
 
 # Meraki Configuration
 MERAKI_API_TOKEN=your_meraki_api_token
