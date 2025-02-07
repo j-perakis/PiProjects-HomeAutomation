@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspberry Pi 5 Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #000428, #004e92);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-attachment: fixed;
+        }
+        .container {
+            text-align: center;
+        }
+        .card {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+        }
+        .card-title {
+            color: #f8f9fa;
+        }
+        .card-text {
+            color: #adb5bd;
+        }
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #ffffff;
+            text-shadow: 0 5px 15px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: glow 2s infinite alternate, move 5s linear infinite;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 5px 15px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5);
+            }
+            to {
+                text-shadow: 0 5px 25px rgba(0, 255, 255, 1), 0 0 50px rgba(0, 255, 255, 0.7);
+            }
+        }
+        @keyframes move {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        .temp-safe {
+            color: green;
+        }
+        .temp-hot {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1>Raspberry Pi 5 Dashboard</h1>
+        <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center" id="info-cards">
+            <!-- Cards will be dynamically added here -->
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function fetchStats() {
+                $.getJSON('/stats', function(data) {
+                    const infoCards = $('#info-cards');
+                    infoCards.empty(); // Clear existing cards
+
+                    Object.keys(data).forEach(function(device) {
+                        const stats = data[device];
+
+                        // Extract temperature in Celsius
+                        const tempCelsius = parseFloat(stats["Compute Temp"].split(' ')[0]);
+                        const tempClass = tempCelsius > 75 ? 'temp-hot' : 'temp-safe';
+
+                        const deviceCard = `
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${device}</h5>
+                                        ${Object.keys(stats).map(key => {
+                                            if (key === "Compute Temp") {
+                                                return `<p class="card-text">${key}: <span class="${tempClass}">${stats[key]}</span></p>`;
+                                            }
+                                            return `<p class="card-text">${key}: ${stats[key]}</p>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        infoCards.append(deviceCard);
+                    });
+                });
+            }
+
+            // Initial fetch
+            fetchStats();
+
+            // Refresh stats every 5 seconds
+            setInterval(fetchStats, 5000);
+        });
+    </script>
+</body>
+</html>
