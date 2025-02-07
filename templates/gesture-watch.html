@@ -1,0 +1,120 @@
+   <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Gesture Recognition System</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 20px;
+                background-color: #1a1a1a;
+                color: #ffffff;
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                max-width: 1600px;
+                margin: 0 auto;
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .camera-container {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+            }
+            .camera-feed {
+                flex: 1;
+                background-color: #2a2a2a;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            .camera-title {
+                margin-bottom: 10px;
+                font-size: 1.2em;
+                color: #4CAF50;
+            }
+            .stats {
+                margin-top: 10px;
+                font-size: 1.1em;
+                color: #888;
+                padding: 10px;
+                background-color: #222;
+                border-radius: 5px;
+            }
+            img {
+                width: 100%;
+                border-radius: 5px;
+            }
+            .last-action {
+                color: #4CAF50;
+                font-weight: bold;
+            }
+            .timestamp {
+                color: #666;
+                font-size: 0.8em;
+                margin-top: 5px;
+            }
+        </style>
+        <script>
+            function formatDateTime(dateTimeStr) {
+                if (!dateTimeStr) return '';
+                const date = new Date(dateTimeStr);
+                return date.toLocaleString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+
+            function updateLastActions() {
+                fetch('/last_actions')
+                    .then(response => response.json())
+                    .then(data => {
+                        ['1', '2'].forEach(camId => {
+                            const actionElement = document.getElementById(`action${camId}`);
+                            const timestampElement = document.getElementById(`timestamp${camId}`);
+                            const action = data[`camera${camId}`];
+                            
+                            actionElement.textContent = action.last_action;
+                            if (action.timestamp) {
+                                timestampElement.textContent = formatDateTime(action.timestamp);
+                            } else {
+                                timestampElement.textContent = '';
+                            }
+                        });
+                    });
+            }
+            
+            setInterval(updateLastActions, 1000);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Gesture Recognition System</h1>
+            </div>
+            <div class="camera-container">
+                <div class="camera-feed">
+                    <div class="camera-title">Camera 1 - Preprocessing Enabled</div>
+                    <img src="/video_feed/1" alt="Camera 1">
+                    <div class="stats">
+                        Last Action: <span class="last-action" id="action1">No action triggered</span>
+                        <div class="timestamp" id="timestamp1"></div>
+                    </div>
+                </div>
+                <div class="camera-feed">
+                    <div class="camera-title">Camera 2 - Raw Feed</div>
+                    <img src="/video_feed/2" alt="Camera 2">
+                    <div class="stats">
+                        Last Action: <span class="last-action" id="action2">No action triggered</span>
+                        <div class="timestamp" id="timestamp2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
