@@ -191,7 +191,7 @@ Feel free to submit issues, fork the repository, and create pull requests for an
 
 ## License
 
-[Your chosen license]
+No license!
 
 ## Acknowledgments
 
